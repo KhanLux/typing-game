@@ -13,6 +13,7 @@ import {
   ReferenceLine
 } from "recharts"
 import { Button } from "@/components/ui/button"
+import ErrorAnalysis from "./ErrorAnalysis"
 
 interface PerformancePoint {
   time: number // seconds elapsed
@@ -28,6 +29,10 @@ interface ResultsProps {
   totalErrorsCommitted?: number // Total errors including corrected ones
   performanceData: PerformancePoint[]
   onRestart: () => void
+  text?: string // El texto que se estaba escribiendo
+  userInput?: string // Lo que el usuario escribió
+  errorIndices?: number[] // Índices donde ocurrieron errores
+  errorTimestamps?: number[] // Timestamps de cuando ocurrieron los errores
   className?: string
 }
 
@@ -39,7 +44,11 @@ const Results = ({
   totalErrorsCommitted = 0,
   performanceData: rawPerformanceData,
   onRestart,
-  className
+  className,
+  text,
+  userInput,
+  errorIndices,
+  errorTimestamps
 }: ResultsProps) => {
   // Process performance data to ensure it's valid and sorted
   const performanceData = React.useMemo(() => {
@@ -340,13 +349,27 @@ const Results = ({
         )}
       </div>
 
+      {/* Análisis de errores */}
+      {text && userInput && errorIndices && errorIndices.length > 0 && (
+        <div className="mt-8 mb-12">
+          <ErrorAnalysis
+            typingData={{
+              text: text,
+              input: userInput,
+              errorIndices: errorIndices,
+              errorTimestamps: errorTimestamps || []
+            }}
+          />
+        </div>
+      )}
+
       {/* Action buttons */}
-      <div className="flex justify-center">
+      <div className="flex justify-center mt-10 mb-6">
         <Button
           onClick={onRestart}
           variant="default"
           size="lg"
-          className="font-medium px-8"
+          className="font-medium px-8 py-6 text-base shadow-md hover:shadow-lg transition-all"
         >
           Intentar de Nuevo
         </Button>
