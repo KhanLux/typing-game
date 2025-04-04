@@ -45,13 +45,13 @@ export default function WritingThemeSelector({ isMobile = false }: WritingThemeS
           className="gap-2"
           aria-label="Select writing theme"
         >
-          {!isMobile && "Writing Theme"}
+          {!isMobile && "Tema de Escritura"}
           <BookText className="h-4 w-4" />
           {!isMobile && <ChevronDown className="h-4 w-4" />}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Select Writing Theme</DropdownMenuLabel>
+        <DropdownMenuLabel>Seleccionar Tema de Escritura</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {writingThemes.map((wTheme) => (
           <DropdownMenuItem

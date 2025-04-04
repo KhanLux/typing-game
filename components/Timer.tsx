@@ -106,7 +106,7 @@ const Timer = ({
       </div>
 
       <div className="text-sm text-muted-foreground">
-        sec
+        seg
       </div>
     </div>
   )

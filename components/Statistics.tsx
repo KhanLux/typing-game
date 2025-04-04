@@ -14,12 +14,12 @@ const Statistics = ({ wpm, accuracy, errors, className }: StatisticsProps) => {
   return (
     <div className={cn("flex justify-center gap-8", className)}>
       <StatCard
-        label="wpm"
+        label="ppm"
         value={wpm.toFixed(0)}
         color="text-primary"
       />
       <StatCard
-        label="acc"
+        label="pre"
         value={`${accuracy.toFixed(1)}%`}
         color={accuracy > 95 ? "text-green-500" :
                accuracy > 85 ? "text-yellow-500" :

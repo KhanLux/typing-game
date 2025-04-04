@@ -51,7 +51,7 @@ export const Header = () => {
     <header className="w-full border-b border-border bg-background">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <div className="flex items-center gap-2">
-          <h1 className="text-lg font-semibold tracking-tight">Typing Game</h1>
+          <h1 className="text-lg font-semibold tracking-tight">Juego de Mecanografía</h1>
         </div>
 
         <div className="flex items-center gap-2">
@@ -69,13 +69,13 @@ export const Header = () => {
                     className="gap-2"
                     aria-label="Select application theme"
                   >
-                    {!isMobile && "App Theme"}
+                    {!isMobile && "Tema de la App"}
                     <Palette className="h-4 w-4" />
                     {!isMobile && <ChevronDown className="h-4 w-4" />}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>Select App Theme</DropdownMenuLabel>
+                  <DropdownMenuLabel>Seleccionar Tema de la App</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   {appThemes.map((appTheme) => (
                     <DropdownMenuItem

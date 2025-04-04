@@ -509,7 +509,7 @@ const TypingTest = ({ texts, className }: TypingTestProps) => {
 
           {!isRunning && !isFinished && (
             <div className="text-center mt-6 text-sm text-muted-foreground">
-              Start typing to begin the test.
+              Comienza a escribir para iniciar la prueba.
             </div>
           )}
         </div>

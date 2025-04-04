@@ -26,10 +26,10 @@ const Settings = ({
   className
 }: SettingsProps) => {
   const timerOptions = [
-    { value: 15, label: "15 seconds" },
-    { value: 30, label: "30 seconds" },
-    { value: 60, label: "60 seconds" },
-    { value: 120, label: "120 seconds" }
+    { value: 15, label: "15 segundos" },
+    { value: 30, label: "30 segundos" },
+    { value: 60, label: "60 segundos" },
+    { value: 120, label: "120 segundos" }
   ]
 
   const handleDurationChange = (value: string) => {
@@ -41,7 +41,7 @@ const Settings = ({
       <div className="flex items-center gap-2">
         <Clock className="h-4 w-4 text-muted-foreground" />
         <span className="text-sm font-medium text-muted-foreground">
-          Duration:
+          Duración:
         </span>
       </div>
 
@@ -51,7 +51,7 @@ const Settings = ({
         disabled={isRunning}
       >
         <SelectTrigger className="w-[140px] h-8 text-sm">
-          <SelectValue placeholder="Select duration" />
+          <SelectValue placeholder="Seleccionar duración" />
         </SelectTrigger>
         <SelectContent>
           {timerOptions.map(option => (

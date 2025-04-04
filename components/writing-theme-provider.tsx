@@ -4,10 +4,10 @@ import React, { createContext, useContext, useState, ReactNode } from "react"
 
 // Define the writing themes
 export const writingThemes = [
-  { id: "quotes", name: "Quotes" },
-  { id: "code", name: "Code Snippets" },
-  { id: "prose", name: "Prose" },
-  { id: "poetry", name: "Poetry" },
+  { id: "quotes", name: "Citas" },
+  { id: "code", name: "Fragmentos de Código" },
+  { id: "prose", name: "Prosa" },
+  { id: "poetry", name: "Poesía" },
 ]
 
 type WritingThemeContextType = {

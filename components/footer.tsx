@@ -14,14 +14,14 @@ export const Footer = () => {
         <div className="flex items-center gap-2 mb-4 md:mb-0">
           <Keyboard className="h-5 w-5" />
           <p className="text-sm text-muted-foreground">
-            © {currentYear} Typing Game. All rights reserved.
+            © {currentYear} Juego de Mecanografía. Todos los derechos reservados.
           </p>
         </div>
-        
+
         <div className="flex items-center gap-6">
-          <a 
-            href="https://github.com/KhanLux" 
-            target="_blank" 
+          <a
+            href="https://github.com/KhanLux"
+            target="_blank"
             rel="noopener noreferrer"
             className={cn(
               "flex items-center gap-2 text-sm hover:underline transition-colors",
@@ -34,10 +34,10 @@ export const Footer = () => {
             <Github className="h-4 w-4" />
             <span>GitHub</span>
           </a>
-          
-          <a 
-            href="https://www.linkedin.com/in/kevin-collazos-783564224/" 
-            target="_blank" 
+
+          <a
+            href="https://www.linkedin.com/in/kevin-collazos-783564224/"
+            target="_blank"
             rel="noopener noreferrer"
             className={cn(
               "flex items-center gap-2 text-sm hover:underline transition-colors",

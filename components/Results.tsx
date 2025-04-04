@@ -162,27 +162,27 @@ const Results = ({
         <div className="flex-1">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <div className="text-xs text-muted-foreground">test type</div>
-              <div className="text-sm">raw</div>
+              <div className="text-xs text-muted-foreground">tipo de prueba</div>
+              <div className="text-sm">bruto</div>
             </div>
             <div>
-              <div className="text-xs text-muted-foreground">time</div>
+              <div className="text-xs text-muted-foreground">tiempo</div>
               <div className="text-sm">{duration}s</div>
             </div>
             <div>
-              <div className="text-xs text-muted-foreground">characters</div>
+              <div className="text-xs text-muted-foreground">caracteres</div>
               <div className="text-sm">{charStats.total}/{charStats.correct}/{charStats.fixed}/{charStats.unfixed}</div>
             </div>
             <div>
-              <div className="text-xs text-muted-foreground">total errors</div>
+              <div className="text-xs text-muted-foreground">errores totales</div>
               <div className="text-sm">{totalErrorsCommitted}</div>
             </div>
             <div>
-              <div className="text-xs text-muted-foreground">consistency</div>
+              <div className="text-xs text-muted-foreground">consistencia</div>
               <div className="text-sm">{consistency}%</div>
             </div>
             <div>
-              <div className="text-xs text-muted-foreground">avg wpm</div>
+              <div className="text-xs text-muted-foreground">ppm promedio</div>
               <div className="text-sm">{Math.round(avgWpm)}</div>
             </div>
           </div>
@@ -192,19 +192,19 @@ const Results = ({
       {/* Performance chart */}
       <div className="h-80 mb-8 bg-background/50 border border-border/50 p-4 rounded-md">
         <div className="flex items-center justify-between mb-2">
-          <div className="text-xs text-muted-foreground">words per minute</div>
+          <div className="text-xs text-muted-foreground">palabras por minuto</div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1">
               <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-              <span className="text-xs">wpm</span>
+              <span className="text-xs">ppm</span>
             </div>
             <div className="flex items-center gap-1">
               <div className="w-3 h-3 rounded-full bg-green-500"></div>
-              <span className="text-xs">avg</span>
+              <span className="text-xs">prom</span>
             </div>
             <div className="flex items-center gap-1">
               <div className="w-3 h-3 rounded-full bg-red-500"></div>
-              <span className="text-xs">acc</span>
+              <span className="text-xs">pre</span>
             </div>
           </div>
         </div>
@@ -252,11 +252,11 @@ const Results = ({
                   // Format numbers to have at most 2 decimal places
                   const formattedValue = typeof value === 'number' ? value.toFixed(2) : value;
 
-                  if (name === 'wpm') return [`${formattedValue} WPM`, 'Speed'];
-                  if (name === 'accuracy') return [`${formattedValue}%`, 'Accuracy'];
+                  if (name === 'wpm') return [`${formattedValue} PPM`, 'Velocidad'];
+                  if (name === 'accuracy') return [`${formattedValue}%`, 'Precisión'];
                   return [formattedValue, name];
                 }}
-                labelFormatter={(time) => `Time: ${typeof time === 'number' ? time.toFixed(0) : time}s`}
+                labelFormatter={(time) => `Tiempo: ${typeof time === 'number' ? time.toFixed(0) : time}s`}
                 contentStyle={{
                   backgroundColor: 'var(--background)',
                   borderColor: 'var(--border)',
@@ -275,7 +275,7 @@ const Results = ({
                   strokeOpacity={0.8}
                   strokeWidth={2}
                   label={{
-                    value: `Avg: ${Math.round(avgWpm)}`,
+                    value: `Prom: ${Math.round(avgWpm)}`,
                     position: 'right',
                     fill: '#4ade80',
                     fontSize: 10,
@@ -313,7 +313,7 @@ const Results = ({
           </ResponsiveContainer>
         ) : (
           <div className="h-full flex items-center justify-center text-muted-foreground">
-            No performance data available
+            No hay datos de rendimiento disponibles
           </div>
         )}
       </div>
@@ -326,7 +326,7 @@ const Results = ({
           size="lg"
           className="font-medium px-8"
         >
-          Try Again
+          Intentar de Nuevo
         </Button>
       </div>
     </div>
