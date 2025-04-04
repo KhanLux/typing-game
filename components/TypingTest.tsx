@@ -45,6 +45,10 @@ const TypingTest = ({ texts, className }: TypingTestProps) => {
   const [totalErrorsCommitted, setTotalErrorsCommitted] = useState(0) // Total errors including corrected ones
   const [performanceData, setPerformanceData] = useState<PerformancePoint[]>([])
 
+  // Estado para análisis detallado de errores
+  const [errorIndices, setErrorIndices] = useState<number[]>([]) // Índices donde ocurrieron errores
+  const [errorTimestamps, setErrorTimestamps] = useState<number[]>([]) // Timestamps de cuando ocurrieron los errores
+
   // Refs
   const containerRef = useRef<HTMLDivElement>(null)
   const wpmIntervalRef = useRef<NodeJS.Timeout | null>(null)
@@ -287,6 +291,8 @@ const TypingTest = ({ texts, className }: TypingTestProps) => {
     setErrors(0)
     setTotalErrorsCommitted(0)
     setPerformanceData([])
+    setErrorIndices([])
+    setErrorTimestamps([])
   }
 
   // Set up typing detection
@@ -408,6 +414,10 @@ const TypingTest = ({ texts, className }: TypingTestProps) => {
       // If the character is incorrect, increment the total errors committed
       if (!isCurrentCharCorrect) {
         setTotalErrorsCommitted(prev => prev + 1);
+
+        // Registrar el índice y timestamp del error para análisis detallado
+        setErrorIndices(prev => [...prev, currentPosition]);
+        setErrorTimestamps(prev => [...prev, Date.now()]);
       }
 
       // Calculate accuracy and errors
@@ -491,6 +501,10 @@ const TypingTest = ({ texts, className }: TypingTestProps) => {
           totalErrorsCommitted={totalErrorsCommitted}
           performanceData={performanceData}
           onRestart={handleRestart}
+          text={currentText}
+          userInput={userInput}
+          errorIndices={errorIndices}
+          errorTimestamps={errorTimestamps}
         />
       ) : (
         <div
