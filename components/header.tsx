@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { ChevronDown, Palette } from "lucide-react"
+import { ChevronDown, Palette, Keyboard } from "lucide-react"
 import { useIsMobile } from "@/components/ui/use-mobile"
 import WritingThemeSelector from "@/components/writing-theme-selector"
 
@@ -51,7 +51,8 @@ export const Header = () => {
     <header className="w-full border-b border-border bg-background">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <div className="flex items-center gap-2">
-          <h1 className="text-lg font-semibold tracking-tight">TypingGame</h1>
+          <Keyboard className="h-6 w-6 text-primary" />
+          <h1 className="text-lg font-semibold tracking-tight">Juego de Mecanografía</h1>
         </div>
 
         <div className="flex items-center gap-2">

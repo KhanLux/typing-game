@@ -3,11 +3,20 @@ import type { Metadata } from "next"
 import "./globals.css"
 import { GeistMono } from "geist/font"
 import { Providers } from "@/components/providers"
+import { Inter } from "next/font/google"
 
 export const metadata: Metadata = {
-  title: "Typing Test",
-  description: "A minimalist typing test application",
-  generator: 'v0.dev'
+  title: "Juego de Mecanografía",
+  description: "Una aplicación minimalista para practicar mecanografía en español",
+  generator: 'v0.dev',
+  manifest: '/manifest.json',
+  themeColor: '#3B82F6',
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/keyboard-icon.svg', type: 'image/svg+xml' }
+    ],
+  }
 }
 
 export default function RootLayout({
