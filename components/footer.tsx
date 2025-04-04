@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils"
 import { useTheme } from "next-themes"
-import { Github, Keyboard } from "lucide-react"
+import { Github, Keyboard, Linkedin } from "lucide-react"
 
 export const Footer = () => {
   const { theme } = useTheme()
@@ -20,7 +20,7 @@ export const Footer = () => {
         
         <div className="flex items-center gap-6">
           <a 
-            href="https://github.com" 
+            href="https://github.com/KhanLux" 
             target="_blank" 
             rel="noopener noreferrer"
             className={cn(
@@ -29,36 +29,26 @@ export const Footer = () => {
             )}
             aria-label="GitHub repository"
             tabIndex={0}
-            onKeyDown={(e) => e.key === "Enter" && window.open("https://github.com", "_blank")}
+            onKeyDown={(e) => e.key === "Enter" && window.open("https://github.com/KhanLux", "_blank")}
           >
             <Github className="h-4 w-4" />
             <span>GitHub</span>
           </a>
           
           <a 
-            href="#" 
+            href="https://www.linkedin.com/in/kevin-collazos-783564224/" 
+            target="_blank" 
+            rel="noopener noreferrer"
             className={cn(
-              "text-sm hover:underline transition-colors",
+              "flex items-center gap-2 text-sm hover:underline transition-colors",
               "text-muted-foreground hover:text-foreground"
             )}
-            aria-label="Privacy Policy"
+            aria-label="LinkedIn"
             tabIndex={0}
-            onKeyDown={(e) => e.key === "Enter" && window.open("#", "_blank")}
+            onKeyDown={(e) => e.key === "Enter" && window.open("https://www.linkedin.com/in/kevin-collazos-783564224/", "_blank")}
           >
-            Privacy Policy
-          </a>
-          
-          <a 
-            href="#" 
-            className={cn(
-              "text-sm hover:underline transition-colors",
-              "text-muted-foreground hover:text-foreground"
-            )}
-            aria-label="Terms of Service"
-            tabIndex={0}
-            onKeyDown={(e) => e.key === "Enter" && window.open("#", "_blank")}
-          >
-            Terms
+            <Linkedin className="h-4 w-4" />
+            <span>LinkedIn</span>
           </a>
         </div>
       </div>
