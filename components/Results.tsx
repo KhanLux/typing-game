@@ -97,18 +97,33 @@ const Results = ({
     ? Math.max(...performanceData.map(point => point.wpm))
     : 0
 
-  // Calculate consistency (standard deviation of WPM)
+  // Calculate consistency (based on coefficient of variation of WPM)
   const consistency = React.useMemo(() => {
-    if (performanceData.length < 2) return 0;
+    // Necesitamos al menos 3 puntos de datos para un cálculo significativo
+    if (performanceData.length < 3) return 50; // Valor predeterminado razonable
 
-    const mean = avgWpm;
-    const squaredDiffs = performanceData.map(point => Math.pow(point.wpm - mean, 2));
+    // Filtrar puntos de datos con WPM > 0 para cálculos más precisos
+    const validPoints = performanceData.filter(point => point.wpm > 0);
+    if (validPoints.length < 3) return 50;
+
+    // Calcular la media
+    const mean = validPoints.reduce((sum, point) => sum + point.wpm, 0) / validPoints.length;
+    if (mean === 0) return 50; // Evitar división por cero
+
+    // Calcular la desviación estándar
+    const squaredDiffs = validPoints.map(point => Math.pow(point.wpm - mean, 2));
     const avgSquaredDiff = squaredDiffs.reduce((sum, val) => sum + val, 0) / squaredDiffs.length;
     const stdDev = Math.sqrt(avgSquaredDiff);
 
-    // Convert to a percentage (higher is better)
-    const maxPossibleStdDev = mean; // Theoretical maximum standard deviation
-    const consistencyPercentage = Math.max(0, Math.min(100, 100 - (stdDev / maxPossibleStdDev * 100)));
+    // Calcular el coeficiente de variación (CV)
+    const cv = stdDev / mean;
+
+    // Convertir CV a un porcentaje de consistencia (menor CV = mayor consistencia)
+    // Un CV de 0 significa perfecta consistencia (100%)
+    // Un CV de 0.5 o mayor significa baja consistencia (0%)
+    const consistencyPercentage = Math.max(0, Math.min(100, 100 - (cv * 200)));
+
+    console.log(`Consistency calculation: Mean WPM: ${mean.toFixed(2)}, StdDev: ${stdDev.toFixed(2)}, CV: ${cv.toFixed(2)}, Consistency: ${Math.round(consistencyPercentage)}%`);
 
     return Math.round(consistencyPercentage);
   }, [performanceData, avgWpm]);
@@ -179,7 +194,14 @@ const Results = ({
             </div>
             <div>
               <div className="text-xs text-muted-foreground">consistencia</div>
-              <div className="text-sm">{consistency}%</div>
+              <div className={cn(
+                "text-sm",
+                consistency >= 75 ? "text-green-500" :
+                consistency >= 50 ? "text-yellow-500" :
+                "text-red-500"
+              )}>
+                {consistency}%
+              </div>
             </div>
             <div>
               <div className="text-xs text-muted-foreground">ppm promedio</div>

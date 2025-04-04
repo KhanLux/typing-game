@@ -51,7 +51,7 @@ export const Header = () => {
     <header className="w-full border-b border-border bg-background">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <div className="flex items-center gap-2">
-          <h1 className="text-lg font-semibold tracking-tight">Juego de Mecanografía</h1>
+          <h1 className="text-lg font-semibold tracking-tight">TypingGame</h1>
         </div>
 
         <div className="flex items-center gap-2">

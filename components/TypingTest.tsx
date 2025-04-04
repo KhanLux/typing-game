@@ -147,12 +147,29 @@ const TypingTest = ({ texts, className }: TypingTestProps) => {
           ? (correctChars / totalCharsTyped) * 100
           : 100;
 
-        // Record performance data point every second
-        console.log(`Recording performance data at ${elapsedTime}s: ${currentWpm} WPM, Accuracy: ${realAccuracy.toFixed(1)}%, Errors: ${errors}, Total Errors: ${totalErrorsCommitted}`)
-        setPerformanceData(prev => [
-          ...prev,
-          { time: elapsedTime, wpm: currentWpm, accuracy: realAccuracy }
-        ])
+        // Solo registrar datos si hay actividad de escritura significativa
+        // Esto ayuda a mejorar el cálculo de consistencia
+        if (userInput.length > 0) {
+          // Record performance data point every second
+          console.log(`Recording performance data at ${elapsedTime}s: ${currentWpm.toFixed(1)} WPM, Accuracy: ${realAccuracy.toFixed(1)}%, Errors: ${errors}, Total Errors: ${totalErrorsCommitted}`)
+
+          setPerformanceData(prev => {
+            // Evitar duplicados en el mismo segundo
+            const existingPoint = prev.find(p => p.time === elapsedTime);
+            if (existingPoint) {
+              return prev.map(p =>
+                p.time === elapsedTime
+                  ? { time: elapsedTime, wpm: currentWpm, accuracy: realAccuracy }
+                  : p
+              );
+            } else {
+              return [
+                ...prev,
+                { time: elapsedTime, wpm: currentWpm, accuracy: realAccuracy }
+              ];
+            }
+          });
+        }
       }, 1000)
     }
 
@@ -241,11 +258,12 @@ const TypingTest = ({ texts, className }: TypingTestProps) => {
     // Add initial data point with 0 WPM and 100% accuracy
     console.log('Recording initial performance data at 0s: 0 WPM, Accuracy: 100%')
 
-    // Create a series of initial data points to ensure smooth graph
+    // Create a series of initial data points to ensure smooth graph and better consistency calculation
     // At the start, accuracy is 100% because no errors have been made yet
     const initialData = [
       { time: 0, wpm: 0, accuracy: 100 },
       { time: 1, wpm: 0, accuracy: 100 },
+      { time: 2, wpm: 0, accuracy: 100 },
     ];
 
     setPerformanceData(initialData)
