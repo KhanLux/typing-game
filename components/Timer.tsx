@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect, useRef, memo } from "react"
 import { cn } from "@/lib/utils"
 
 interface TimerProps {
@@ -11,13 +11,13 @@ interface TimerProps {
   className?: string
 }
 
-const Timer = ({
+const Timer = memo(function Timer({
   duration = 60, // Default to 60 seconds if not provided
   isRunning,
   onComplete,
   onTick,
   className
-}: TimerProps) => {
+}: TimerProps) {
   const [timeLeft, setTimeLeft] = useState(duration)
   const [progress, setProgress] = useState(100)
   const startTimeRef = useRef<number | null>(null)
@@ -110,6 +110,6 @@ const Timer = ({
       </div>
     </div>
   )
-}
+})
 
 export default Timer
