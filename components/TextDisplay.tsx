@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useRef, useEffect } from "react"
+import React, { useRef, useEffect, memo } from "react"
 import { cn } from "@/lib/utils"
 
 interface TextDisplayProps {
@@ -10,7 +10,7 @@ interface TextDisplayProps {
   className?: string
 }
 
-const TextDisplay = ({ text, userInput, currentPosition, className }: TextDisplayProps) => {
+const TextDisplay = memo(function TextDisplay({ text, userInput, currentPosition, className }: TextDisplayProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const cursorRef = useRef<HTMLSpanElement>(null)
 
@@ -66,6 +66,6 @@ const TextDisplay = ({ text, userInput, currentPosition, className }: TextDispla
       })}
     </div>
   )
-}
+})
 
 export default TextDisplay
