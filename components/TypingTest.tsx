@@ -15,6 +15,12 @@ interface TypingTestProps {
   className?: string
 }
 
+interface PerformancePoint {
+  time: number // seconds elapsed
+  wpm: number
+  accuracy?: number // accuracy at this point in time
+}
+
 const TypingTest = ({ texts, className }: TypingTestProps) => {
   // Get the current writing theme
   const { writingTheme } = useWritingTheme()
@@ -76,9 +82,9 @@ const TypingTest = ({ texts, className }: TypingTestProps) => {
   }, [isRunning])
 
   // Handle duration change
-  const handleDurationChange = (newDuration: number) => {
+  const handleDurationChange = useCallback((newDuration: number) => {
     setDuration(newDuration)
-  }
+  }, [])
 
   return (
     <div className={cn("w-full mx-auto", className)}>
