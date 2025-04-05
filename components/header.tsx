@@ -40,18 +40,28 @@ export const Header = () => {
   }, [])
 
   const handleThemeChange = (newTheme: string) => {
-    setTheme(newTheme)
+    // Asegurarse de que el tema se establezca correctamente
+    if (mounted) {
+      setTheme(newTheme);
+      // Forzar la actualización del tema en el DOM
+      document.documentElement.classList.remove('light', 'dark', 'blue', 'red', 'yellow', 'green', 'purple');
+      document.documentElement.classList.add(newTheme);
+    }
   }
 
   // Don't render theme selectors until mounted to avoid hydration mismatch
   const renderThemeSelectors = mounted
 
   return (
-    <header className="w-full border-b border-border bg-background">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+    <header className="w-full border-b border-border bg-background" role="banner">
+      <div className="container mx-auto flex h-14 sm:h-16 items-center justify-between px-4">
         <div className="flex items-center gap-2">
-          <Keyboard className="h-6 w-6 text-primary" />
-          <h1 className="text-lg font-semibold tracking-tight">Juego de Mecanografía</h1>
+          <Keyboard className="h-5 w-5 sm:h-6 sm:w-6 text-primary" aria-hidden="true" />
+          <h1 className="text-base sm:text-lg font-semibold tracking-tight">
+            <a href="/" className="focus:outline-none focus:ring-2 focus:ring-primary rounded-sm">
+              Juego de Mecanografía
+            </a>
+          </h1>
         </div>
 
         <div className="flex items-center gap-2">
@@ -63,12 +73,14 @@ export const Header = () => {
                   <Button
                     variant="ghost"
                     size={isMobile ? "icon" : "default"}
-                    className="gap-2"
-                    aria-label="Select application theme"
+                    className="gap-2 h-9 px-2 sm:h-10 sm:px-4"
+                    aria-label="Seleccionar tema de la aplicación"
                   >
-                    {!isMobile && "Tema de la App"}
-                    <Palette className="h-4 w-4" />
-                    {!isMobile && <ChevronDown className="h-4 w-4" />}
+                    {!isMobile && (
+                      <span className="text-sm sm:text-base">Tema de la App</span>
+                    )}
+                    <Palette className="h-4 w-4" aria-hidden="true" />
+                    {!isMobile && <ChevronDown className="h-4 w-4" aria-hidden="true" />}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
@@ -82,6 +94,7 @@ export const Header = () => {
                         "cursor-pointer",
                         theme === appTheme.name && "font-semibold"
                       )}
+                      aria-current={theme === appTheme.name ? "true" : "false"}
                     >
                       {appTheme.label}
                     </DropdownMenuItem>

@@ -38,14 +38,24 @@ const Settings = memo(function Settings({
   }
 
   return (
-    <div className={cn("flex flex-col sm:flex-row items-center gap-4", className)}>
+    <div
+      className={cn("flex flex-col sm:flex-row items-center gap-4", className)}
+      role="group"
+      aria-labelledby="duration-settings-label"
+    >
       <div className="flex items-center gap-2">
-        <Clock className="h-4 w-4 text-muted-foreground" />
-        <span className="text-sm font-medium text-muted-foreground">
+        <Clock className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+        <span
+          id="duration-settings-label"
+          className="text-sm font-medium text-muted-foreground"
+        >
           Duración:
         </span>
         {recommendedDuration && recommendedDuration !== duration && (
-          <span className="text-xs text-primary ml-1">
+          <span
+            className="text-xs text-primary ml-1 hidden sm:inline-block"
+            aria-live="polite"
+          >
             (Recomendado: {recommendedDuration}s)
           </span>
         )}
@@ -55,20 +65,32 @@ const Settings = memo(function Settings({
         value={duration.toString()}
         onValueChange={handleDurationChange}
         disabled={isRunning}
+        aria-label="Seleccionar duración del test"
       >
-        <SelectTrigger className="w-[140px] h-8 text-sm">
+        <SelectTrigger
+          className="w-[140px] h-8 text-sm"
+          aria-label={`Duración actual: ${duration} segundos`}
+        >
           <SelectValue placeholder="Seleccionar duración" />
         </SelectTrigger>
         <SelectContent>
           {timerOptions.map(option => (
-            <SelectItem key={option.value} value={option.value.toString()}>
+            <SelectItem
+              key={option.value}
+              value={option.value.toString()}
+              aria-label={`${option.label}`}
+            >
               {option.label}
             </SelectItem>
           ))}
         </SelectContent>
       </Select>
 
-      {/* Botón de inicio eliminado - el juego comienza automáticamente al escribir */}
+      {/* Información de ayuda para usuarios de lectores de pantalla */}
+      <span className="sr-only">
+        El test comenzará automáticamente cuando empieces a escribir.
+        {isRunning ? " El test está en progreso." : " El test no ha comenzado."}
+      </span>
     </div>
   )
 })

@@ -36,32 +36,7 @@ interface ResultsProps {
   className?: string
 }
 
-interface StatCardProps {
-  label: string
-  value: string
-  highlight?: boolean
-}
-
-const StatCard = memo(function StatCard({ label, value, highlight = false }: StatCardProps) {
-  return (
-    <div className={cn(
-      "p-3 text-center border",
-      highlight
-        ? "border-primary/20 bg-primary/5"
-        : "border-border bg-accent/5"
-    )}>
-      <div className="text-xs font-medium text-muted-foreground">
-        {label}
-      </div>
-      <div className={cn(
-        "text-xl font-mono font-medium mt-1",
-        highlight ? "text-primary" : "text-foreground"
-      )}>
-        {value}
-      </div>
-    </div>
-  )
-})
+// Eliminada la interfaz y el componente StatCard que no se utilizan
 
 const Results = memo(function Results({
   duration,
@@ -180,51 +155,63 @@ const Results = memo(function Results({
     };
   }, [finalWpm, duration, accuracy, errors]);
 
-  // Format time for x-axis
-  const formatXAxis = (time: number) => {
-    const minutes = Math.floor(time / 60)
-    const seconds = time % 60
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`
-  }
+  // Función de formato eliminada porque no se utiliza
 
 
   return (
-    <div className={cn("w-full max-w-4xl mx-auto p-6 bg-background border border-border", className)}>
-      <div className="flex flex-col md:flex-row gap-6 mb-8">
+    <div
+      className={cn("w-full max-w-4xl mx-auto p-4 sm:p-6 bg-background border border-border rounded-lg", className)}
+      role="region"
+      aria-label="Resultados de la prueba de mecanografía"
+    >
+      <div className="flex flex-col md:flex-row gap-4 sm:gap-6 mb-6 sm:mb-8">
         {/* Main stats */}
         <div className="flex-1">
           <div className="flex flex-col">
-            <div className="text-sm text-primary/80 uppercase tracking-wide">wpm</div>
-            <div className="text-6xl font-mono font-bold text-primary">{finalWpm.toFixed(0)}</div>
+            <div className="text-sm text-primary/80 uppercase tracking-wide" id="wpm-label">wpm</div>
+            <div
+              className="text-4xl sm:text-5xl md:text-6xl font-mono font-bold text-primary"
+              aria-labelledby="wpm-label"
+            >
+              {finalWpm.toFixed(0)}
+            </div>
 
-            <div className="mt-4 text-sm text-primary/80 uppercase tracking-wide">acc</div>
-            <div className="text-6xl font-mono font-bold text-primary/90">{accuracy.toFixed(0)}%</div>
+            <div className="mt-4 text-sm text-primary/80 uppercase tracking-wide" id="acc-label">acc</div>
+            <div
+              className="text-4xl sm:text-5xl md:text-6xl font-mono font-bold text-primary/90"
+              aria-labelledby="acc-label"
+            >
+              {accuracy.toFixed(0)}%
+            </div>
           </div>
         </div>
 
         {/* Secondary stats */}
         <div className="flex-1">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4">
             <div>
-              <div className="text-xs text-muted-foreground">tipo de prueba</div>
-              <div className="text-sm">bruto</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">tipo de prueba</div>
+              <div className="text-xs sm:text-sm">bruto</div>
             </div>
             <div>
-              <div className="text-xs text-muted-foreground">tiempo</div>
-              <div className="text-sm">{duration}s</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">tiempo</div>
+              <div className="text-xs sm:text-sm">{duration}s</div>
             </div>
             <div>
-              <div className="text-xs text-muted-foreground">caracteres</div>
-              <div className="text-sm">{charStats.total}/{charStats.correct}/{charStats.fixed}/{charStats.unfixed}</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">caracteres</div>
+              <div className="text-xs sm:text-sm">
+                <span className="sr-only">Total: {charStats.total}, Correctos: {charStats.correct}, Corregidos: {charStats.fixed}, Sin corregir: {charStats.unfixed}</span>
+                <span aria-hidden="true">{charStats.total}/{charStats.correct}/{charStats.fixed}/{charStats.unfixed}</span>
+              </div>
             </div>
             <div>
-              <div className="text-xs text-muted-foreground">errores totales</div>
-              <div className="text-sm">{totalErrorsCommitted}</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">errores totales</div>
+              <div className="text-xs sm:text-sm">{totalErrorsCommitted}</div>
             </div>
             <div>
-              <div className="text-xs text-muted-foreground">consistencia</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">consistencia</div>
               <div className={cn(
-                "text-sm",
+                "text-xs sm:text-sm",
                 consistency >= 75 ? "text-green-500" :
                 consistency >= 50 ? "text-yellow-500" :
                 "text-red-500"
@@ -233,31 +220,41 @@ const Results = memo(function Results({
               </div>
             </div>
             <div>
-              <div className="text-xs text-muted-foreground">ppm promedio</div>
-              <div className="text-sm">{Math.round(avgWpm)}</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">ppm promedio</div>
+              <div className="text-xs sm:text-sm">{Math.round(avgWpm)}</div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Performance chart */}
-      <div className="h-80 mb-8 bg-background/50 border border-border/50 p-4 rounded-md">
-        <div className="flex items-center justify-between mb-2">
+      <div
+        className="h-64 sm:h-80 mb-6 sm:mb-8 bg-background/50 border border-border/50 p-3 sm:p-4 rounded-md"
+        aria-label="Gráfico de rendimiento"
+      >
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 gap-2">
           <div className="text-xs text-muted-foreground">palabras por minuto</div>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4">
             <div className="flex items-center gap-1">
-              <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+              <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-yellow-500" aria-hidden="true"></div>
               <span className="text-xs">ppm</span>
             </div>
             <div className="flex items-center gap-1">
-              <div className="w-3 h-3 rounded-full bg-green-500"></div>
+              <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-green-500" aria-hidden="true"></div>
               <span className="text-xs">prom</span>
             </div>
             <div className="flex items-center gap-1">
-              <div className="w-3 h-3 rounded-full bg-red-500"></div>
+              <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-red-500" aria-hidden="true"></div>
               <span className="text-xs">pre</span>
             </div>
           </div>
+        </div>
+
+        {/* Descripción para lectores de pantalla */}
+        <div className="sr-only">
+          Gráfico que muestra tu velocidad de escritura y precisión a lo largo del tiempo.
+          Velocidad promedio: {Math.round(avgWpm)} palabras por minuto.
+          Velocidad máxima: {Math.round(maxWpm)} palabras por minuto.
         </div>
 
         {performanceData.length > 0 ? (
@@ -384,12 +381,13 @@ const Results = memo(function Results({
       )}
 
       {/* Action buttons */}
-      <div className="flex justify-center mt-10 mb-6">
+      <div className="flex justify-center mt-8 sm:mt-10 mb-4 sm:mb-6">
         <Button
           onClick={onRestart}
           variant="default"
           size="lg"
-          className="font-medium px-8 py-6 text-base shadow-md hover:shadow-lg transition-all"
+          className="font-medium px-6 py-5 sm:px-8 sm:py-6 text-sm sm:text-base shadow-md hover:shadow-lg transition-all"
+          aria-label="Intentar de nuevo la prueba de mecanografía"
         >
           Intentar de Nuevo
         </Button>

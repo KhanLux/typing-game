@@ -102,16 +102,28 @@ const Timer = memo(function Timer({
     return "text-red-500"
   }
 
+  // Format time for screen readers (more descriptive)
+  const formattedTimeForScreenReader = `${timeLeft} segundos restantes`;
+
   return (
-    <div className={cn("flex items-center gap-2", className)}>
+    <div
+      className={cn("flex items-center gap-2", className)}
+      role="timer"
+      aria-live="polite"
+      aria-atomic="true"
+    >
       {/* Minimalist timer display */}
-      <div className="font-mono text-2xl font-medium tracking-tight">
-        <span className={getTimerColor()}>
+      <div className="font-mono text-xl sm:text-2xl font-medium tracking-tight">
+        <span
+          className={getTimerColor()}
+          aria-hidden="true" // Hide from screen readers as we provide a more descriptive version
+        >
           {timeLeft}
         </span>
+        <span className="sr-only">{formattedTimeForScreenReader}</span>
       </div>
 
-      <div className="text-sm text-muted-foreground">
+      <div className="text-xs sm:text-sm text-muted-foreground">
         seg
       </div>
     </div>

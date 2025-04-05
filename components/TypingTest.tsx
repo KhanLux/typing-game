@@ -69,7 +69,7 @@ const TypingTest = ({ texts, className }: TypingTestProps) => {
     currentPosition,
     isRunning,
     isFinished,
-    elapsedTime,
+    // elapsedTime, // No se utiliza en este componente
     wpm,
     accuracy,
     errors,
@@ -125,7 +125,10 @@ const TypingTest = ({ texts, className }: TypingTestProps) => {
   }, [])
 
   return (
-    <div className={cn("w-full mx-auto", className)}>
+    <main
+      className={cn("w-full max-w-4xl mx-auto px-4 py-6", className)}
+      aria-live="polite"
+    >
       {isFinished ? (
         <Results
           duration={duration}
@@ -146,6 +149,9 @@ const TypingTest = ({ texts, className }: TypingTestProps) => {
           tabIndex={0}
           onKeyDown={handleKeyDown}
           className="w-full outline-none"
+          role="textbox"
+          aria-label="Área de mecanografía"
+          aria-describedby="typing-instructions"
         >
           <div className="mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <Settings
@@ -172,16 +178,25 @@ const TypingTest = ({ texts, className }: TypingTestProps) => {
             className="mb-6"
           />
 
-          {/* Estadísticas eliminadas para mantener la interfaz limpia */}
-
+          {/* Instrucciones para el usuario */}
           {!isRunning && !isFinished && (
-            <div className="text-center mt-6 text-sm text-muted-foreground">
+            <div
+              id="typing-instructions"
+              className="text-center mt-6 text-sm sm:text-base text-muted-foreground"
+              aria-live="polite"
+            >
               Comienza a escribir para iniciar la prueba.
             </div>
           )}
+
+          {/* Información para lectores de pantalla */}
+          <div className="sr-only" aria-live="assertive">
+            {isRunning ? "Prueba en progreso. Escribe el texto mostrado." : ""}
+            {isFinished ? "Prueba completada. Revisa tus resultados." : ""}
+          </div>
         </div>
       )}
-    </div>
+    </main>
   )
 }
 
