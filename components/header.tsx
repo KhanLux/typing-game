@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, { useState, useEffect } from "react"
 import { useTheme } from "next-themes"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -12,8 +12,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { ChevronDown, Palette, Keyboard } from "lucide-react"
+import { ChevronDown, Palette, Keyboard, BarChart2 } from "lucide-react"
 import { useIsMobile } from "@/components/ui/use-mobile"
+import { HistoryView } from "@/components/HistoryView"
+import { getUserPreferences, saveUserPreferences } from "@/lib/storage-service"
 
 // App themes configuration
 
@@ -30,13 +32,21 @@ const appThemes = [
 
 export const Header = () => {
   const [mounted, setMounted] = React.useState(false)
+  const [historyOpen, setHistoryOpen] = useState(false)
   const { theme, setTheme } = useTheme()
   const isMobile = useIsMobile()
 
   // Handle mounted state to avoid hydration issues
-  React.useEffect(() => {
+  useEffect(() => {
     setMounted(true)
 
+    // Cargar preferencias del usuario
+    if (typeof window !== 'undefined') {
+      const preferences = getUserPreferences();
+      if (preferences.theme) {
+        handleThemeChange(preferences.theme);
+      }
+    }
   }, [])
 
   const handleThemeChange = (newTheme: string) => {
@@ -46,6 +56,13 @@ export const Header = () => {
       // Forzar la actualización del tema en el DOM
       document.documentElement.classList.remove('light', 'dark', 'blue', 'red', 'yellow', 'green', 'purple');
       document.documentElement.classList.add(newTheme);
+
+      // Guardar preferencias del usuario
+      const preferences = getUserPreferences();
+      saveUserPreferences({
+        ...preferences,
+        theme: newTheme
+      });
     }
   }
 
@@ -67,6 +84,20 @@ export const Header = () => {
         <div className="flex items-center gap-2">
           {renderThemeSelectors ? (
             <>
+              {/* Historial Button */}
+              <Button
+                variant="ghost"
+                size={isMobile ? "icon" : "default"}
+                className="gap-2 h-9 px-2 sm:h-10 sm:px-4"
+                onClick={() => setHistoryOpen(true)}
+                aria-label="Ver historial de resultados"
+              >
+                {!isMobile && (
+                  <span className="text-sm sm:text-base">Historial</span>
+                )}
+                <BarChart2 className="h-4 w-4" aria-hidden="true" />
+              </Button>
+
               {/* App Theme Selector */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -104,6 +135,9 @@ export const Header = () => {
             </>
           ) : null}
         </div>
+
+        {/* Componente de historial */}
+        <HistoryView open={historyOpen} onOpenChange={setHistoryOpen} />
       </div>
     </header>
   )

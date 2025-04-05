@@ -1,6 +1,6 @@
 "use client"
 
-import React, { memo, useMemo } from "react"
+import React, { memo, useMemo, useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
 import {
   LineChart,
@@ -14,6 +14,7 @@ import {
 } from "recharts"
 import { Button } from "@/components/ui/button"
 import ErrorAnalysis from "./ErrorAnalysis"
+import { saveTestResult } from "@/lib/storage-service"
 
 interface PerformancePoint {
   time: number // seconds elapsed
@@ -157,6 +158,30 @@ const Results = memo(function Results({
 
   // Función de formato eliminada porque no se utiliza
 
+  // Generar un ID de sesión único para este resultado
+  const sessionId = useMemo(() => `result_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`, []);
+
+  // Guardar el resultado en el almacenamiento local (una sola vez)
+  const [resultSaved, setResultSaved] = useState(false);
+
+  useEffect(() => {
+    // Solo guardar si hay datos válidos y no se ha guardado aún
+    if (finalWpm > 0 && text && !resultSaved) {
+      // Usar el ID de sesión para evitar duplicados
+      saveTestResult({
+        wpm: finalWpm,
+        accuracy,
+        errors,
+        totalErrorsCommitted,
+        duration,
+        textLength: text.length,
+        textPreview: text.substring(0, 50) + (text.length > 50 ? '...' : '')
+      }, sessionId);
+
+      // Marcar como guardado para evitar duplicados
+      setResultSaved(true);
+    }
+  }, [finalWpm, accuracy, errors, totalErrorsCommitted, duration, text, resultSaved, sessionId]);
 
   return (
     <div

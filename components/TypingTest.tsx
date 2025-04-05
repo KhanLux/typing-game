@@ -8,6 +8,7 @@ import Results from "./Results"
 import Settings from "./Settings"
 import { getAllTexts, getTextsByDifficulty } from "@/lib/themed-typing-texts"
 import { useTypingTest } from "@/hooks/use-typing-test"
+import { getUserPreferences, saveUserPreferences } from "@/lib/storage-service"
 
 interface TypingTestProps {
   texts: string[]
@@ -35,6 +36,14 @@ const TypingTest = ({ texts, className }: TypingTestProps) => {
   // State for test configuration
   const [duration, setDuration] = useState(60) // default: 60 seconds
   const containerRef = useRef<HTMLDivElement>(null)
+
+  // Cargar preferencias del usuario
+  useEffect(() => {
+    const preferences = getUserPreferences();
+    if (preferences.duration) {
+      setDuration(preferences.duration);
+    }
+  }, [])
 
   // Get a random text from the available texts based on duration
   const getRandomText = useCallback(async () => {
@@ -119,6 +128,18 @@ const TypingTest = ({ texts, className }: TypingTestProps) => {
   const handleDurationChange = useCallback((newDuration: number) => {
     // Actualizar la duración
     setDuration(newDuration);
+
+    // Guardar preferencias del usuario
+    saveUserPreferences({
+      theme: document.documentElement.classList.contains('dark') ? 'dark' :
+            document.documentElement.classList.contains('light') ? 'light' :
+            document.documentElement.classList.contains('blue') ? 'blue' :
+            document.documentElement.classList.contains('red') ? 'red' :
+            document.documentElement.classList.contains('yellow') ? 'yellow' :
+            document.documentElement.classList.contains('green') ? 'green' :
+            document.documentElement.classList.contains('purple') ? 'purple' : 'dark',
+      duration: newDuration
+    });
 
     // No necesitamos obtener un nuevo texto aquí porque el efecto anterior
     // se activará cuando cambie la duración y obtendrá un nuevo texto apropiado
