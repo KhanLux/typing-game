@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, { memo, useMemo } from "react"
 import { cn } from "@/lib/utils"
 import {
   LineChart,
@@ -36,7 +36,34 @@ interface ResultsProps {
   className?: string
 }
 
-const Results = ({
+interface StatCardProps {
+  label: string
+  value: string
+  highlight?: boolean
+}
+
+const StatCard = memo(function StatCard({ label, value, highlight = false }: StatCardProps) {
+  return (
+    <div className={cn(
+      "p-3 text-center border",
+      highlight
+        ? "border-primary/20 bg-primary/5"
+        : "border-border bg-accent/5"
+    )}>
+      <div className="text-xs font-medium text-muted-foreground">
+        {label}
+      </div>
+      <div className={cn(
+        "text-xl font-mono font-medium mt-1",
+        highlight ? "text-primary" : "text-foreground"
+      )}>
+        {value}
+      </div>
+    </div>
+  )
+})
+
+const Results = memo(function Results({
   duration,
   finalWpm,
   accuracy,
@@ -49,9 +76,9 @@ const Results = ({
   userInput,
   errorIndices,
   errorTimestamps
-}: ResultsProps) => {
+}: ResultsProps) {
   // Process performance data to ensure it's valid and sorted
-  const performanceData = React.useMemo(() => {
+  const performanceData = useMemo(() => {
     // Filter out any invalid data points and ensure they're sorted by time
     const validData = rawPerformanceData
       .filter(point => point && typeof point.time === 'number' && typeof point.wpm === 'number')
@@ -70,7 +97,7 @@ const Results = ({
   }, [rawPerformanceData, duration, finalWpm, accuracy]);
 
   // Calculate average WPM - weighted by time intervals
-  const avgWpm = React.useMemo(() => {
+  const avgWpm = useMemo(() => {
     if (performanceData.length <= 1) return finalWpm || 0;
 
     // Calculate time-weighted average
@@ -107,7 +134,7 @@ const Results = ({
     : 0
 
   // Calculate consistency (based on coefficient of variation of WPM)
-  const consistency = React.useMemo(() => {
+  const consistency = useMemo(() => {
     // Necesitamos al menos 3 puntos de datos para un cálculo significativo
     if (performanceData.length < 3) return 50; // Valor predeterminado razonable
 
@@ -138,7 +165,7 @@ const Results = ({
   }, [performanceData, avgWpm]);
 
   // Calculate character statistics
-  const charStats = React.useMemo(() => {
+  const charStats = useMemo(() => {
     // Estimate total characters typed based on WPM
     const totalChars = Math.round(finalWpm * (duration / 60) * 5);
     const correctChars = Math.round(totalChars * (accuracy / 100));
@@ -376,33 +403,6 @@ const Results = ({
       </div>
     </div>
   )
-}
-
-interface StatCardProps {
-  label: string
-  value: string
-  highlight?: boolean
-}
-
-const StatCard = ({ label, value, highlight = false }: StatCardProps) => {
-  return (
-    <div className={cn(
-      "p-3 text-center border",
-      highlight
-        ? "border-primary/20 bg-primary/5"
-        : "border-border bg-accent/5"
-    )}>
-      <div className="text-xs font-medium text-muted-foreground">
-        {label}
-      </div>
-      <div className={cn(
-        "text-xl font-mono font-medium mt-1",
-        highlight ? "text-primary" : "text-foreground"
-      )}>
-        {value}
-      </div>
-    </div>
-  )
-}
+})
 
 export default Results
