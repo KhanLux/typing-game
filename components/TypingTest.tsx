@@ -1,14 +1,16 @@
 "use client"
 
-import React, { useState, useRef, useCallback, useEffect, useMemo } from "react"
+import React, { useState, useRef, useCallback, useEffect, useMemo, lazy, Suspense } from "react"
 import { cn } from "@/lib/utils"
 import Timer from "./Timer"
 import TextDisplay from "./TextDisplay"
-import Results from "./Results"
 import Settings from "./Settings"
 import { getAllTexts, getTextsByDifficulty } from "@/lib/themed-typing-texts"
 import { useTypingTest } from "@/hooks/use-typing-test"
 import { getUserPreferences, saveUserPreferences } from "@/lib/storage-service"
+
+// Carga diferida del componente Results (pesado debido a los gráficos)
+const Results = lazy(() => import('./Results'))
 
 interface TypingTestProps {
   texts: string[]
@@ -17,20 +19,23 @@ interface TypingTestProps {
 
 const TypingTest = ({ texts, className }: TypingTestProps) => {
   // Función para calcular la duración recomendada basada en la longitud del texto
-  const calculateRecommendedDuration = useCallback((text: string): number => {
-    // Calcular la duración basada en la longitud del texto
-    const textLength = text.length;
+  // Optimización: Usar useMemo para valores constantes en lugar de useCallback
+  const calculateRecommendedDuration = useMemo(() => {
+    return (text: string): number => {
+      // Calcular la duración basada en la longitud del texto
+      const textLength = text.length;
 
-    // Asignar directamente a un intervalo basado en la longitud del texto
-    if (textLength < 150) {
-      return 15; // Textos muy cortos
-    } else if (textLength < 300) {
-      return 30; // Textos cortos
-    } else if (textLength < 600) {
-      return 60; // Textos medianos
-    } else {
-      return 120; // Textos largos
-    }
+      // Asignar directamente a un intervalo basado en la longitud del texto
+      if (textLength < 150) {
+        return 15; // Textos muy cortos
+      } else if (textLength < 300) {
+        return 30; // Textos cortos
+      } else if (textLength < 600) {
+        return 60; // Textos medianos
+      } else {
+        return 120; // Textos largos
+      }
+    };
   }, []);
 
   // State for test configuration
@@ -45,19 +50,23 @@ const TypingTest = ({ texts, className }: TypingTestProps) => {
     }
   }, [])
 
+  // Optimización: Usar useMemo para la lógica de selección de dificultad
+  const difficultySelector = useMemo(() => {
+    return (currentDuration: number): 'básico' | 'intermedio' | 'avanzado' => {
+      if (currentDuration <= 30) {
+        return 'básico';
+      } else if (currentDuration <= 60) {
+        return 'intermedio';
+      } else {
+        return 'avanzado';
+      }
+    };
+  }, []);
+
   // Get a random text from the available texts based on duration
   const getRandomText = useCallback(async () => {
     // Determinar la dificultad basada en la duración actual
-    // Esto permite una progresión natural de dificultad
-    let difficulty: 'básico' | 'intermedio' | 'avanzado' = 'intermedio'; // Por defecto
-
-    if (duration <= 30) {
-      difficulty = 'básico';
-    } else if (duration <= 60) {
-      difficulty = 'intermedio';
-    } else {
-      difficulty = 'avanzado';
-    }
+    const difficulty = difficultySelector(duration);
 
     // Obtener textos por nivel de dificultad
     const difficultyTexts = getTextsByDifficulty(difficulty);
@@ -69,7 +78,7 @@ const TypingTest = ({ texts, className }: TypingTestProps) => {
     // Obtener un texto aleatorio
     const randomIndex = Math.floor(Math.random() * textsToUse.length);
     return textsToUse[randomIndex];
-  }, [texts, duration])
+  }, [texts, duration, difficultySelector])
 
   // Use the typing test hook
   const {
@@ -151,19 +160,29 @@ const TypingTest = ({ texts, className }: TypingTestProps) => {
       aria-live="polite"
     >
       {isFinished ? (
-        <Results
-          duration={duration}
-          finalWpm={wpm}
-          accuracy={accuracy}
-          errors={errors}
-          totalErrorsCommitted={totalErrorsCommitted}
-          performanceData={performanceData}
-          onRestart={handleRestart}
-          text={currentText}
-          userInput={userInput}
-          errorIndices={errorIndices}
-          errorTimestamps={errorTimestamps}
-        />
+        // Optimización: Usar Suspense para mostrar un fallback mientras se carga Results
+        <Suspense fallback={
+          <div className="w-full h-64 flex items-center justify-center">
+            <div className="animate-pulse text-center">
+              <div className="h-8 w-32 bg-primary/20 rounded mx-auto mb-4"></div>
+              <div className="h-4 w-48 bg-muted rounded mx-auto"></div>
+            </div>
+          </div>
+        }>
+          <Results
+            duration={duration}
+            finalWpm={wpm}
+            accuracy={accuracy}
+            errors={errors}
+            totalErrorsCommitted={totalErrorsCommitted}
+            performanceData={performanceData}
+            onRestart={handleRestart}
+            text={currentText}
+            userInput={userInput}
+            errorIndices={errorIndices}
+            errorTimestamps={errorTimestamps}
+          />
+        </Suspense>
       ) : (
         <div
           ref={containerRef}

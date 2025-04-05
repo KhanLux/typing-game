@@ -8,6 +8,8 @@ interface ThemeProviderProps {
   defaultTheme?: string
   enableSystem?: boolean
   disableTransitionOnChange?: boolean
+  themes?: string[]
+  forcedTheme?: string | undefined
 }
 
 export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
