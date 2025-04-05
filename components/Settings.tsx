@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, { memo } from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -19,12 +19,12 @@ interface SettingsProps {
   className?: string
 }
 
-const Settings = ({
+const Settings = memo(function Settings({
   duration,
   onDurationChange,
   isRunning,
   className
-}: SettingsProps) => {
+}: SettingsProps) {
   const timerOptions = [
     { value: 15, label: "15 segundos" },
     { value: 30, label: "30 segundos" },
@@ -65,6 +65,6 @@ const Settings = ({
       {/* Botón de inicio eliminado - el juego comienza automáticamente al escribir */}
     </div>
   )
-}
+})
 
 export default Settings
