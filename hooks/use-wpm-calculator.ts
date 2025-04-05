@@ -39,11 +39,6 @@ export const useWpmCalculator = ({
     if (timeInMinutes === 0) return 0;
 
     const wpm = wordCount / timeInMinutes;
-    console.log(
-      `WPM calculation: ${correctCharCount} correct chars / 5 = ${wordCount} words in ${timeInMinutes.toFixed(
-        2
-      )} minutes = ${wpm.toFixed(1)} WPM`
-    );
 
     return wpm;
   }, [startTime, isRunning, elapsedTime, userInput, currentText]);
@@ -56,11 +51,11 @@ export const useWpmCalculator = ({
       // Calcular precisión basada en el total de caracteres escritos (incluyendo errores) vs caracteres correctos
       const totalCharsTyped = userInput.length + totalErrorsCommitted - currentErrors;
       const correctChars = userInput.length - currentErrors;
-      
+
       const accuracyPercent = totalCharsTyped > 0
         ? (correctChars / totalCharsTyped) * 100
         : 100;
-      
+
       return accuracyPercent;
     },
     [userInput]

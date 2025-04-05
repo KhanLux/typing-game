@@ -14,9 +14,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { ChevronDown, Palette, Keyboard } from "lucide-react"
 import { useIsMobile } from "@/components/ui/use-mobile"
-import WritingThemeSelector from "@/components/writing-theme-selector"
 
-// Writing themes are imported from writing-theme-provider
+// App themes configuration
 
 // Define the application themes
 const appThemes = [
@@ -37,7 +36,7 @@ export const Header = () => {
   // Handle mounted state to avoid hydration issues
   React.useEffect(() => {
     setMounted(true)
-    console.log('Header mounted, theme:', theme)
+
   }, [])
 
   const handleThemeChange = (newTheme: string) => {
@@ -58,9 +57,6 @@ export const Header = () => {
         <div className="flex items-center gap-2">
           {renderThemeSelectors ? (
             <>
-              {/* Writing Theme Selector */}
-              <WritingThemeSelector isMobile={isMobile} />
-
               {/* App Theme Selector */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

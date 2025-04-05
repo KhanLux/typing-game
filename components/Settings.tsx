@@ -2,7 +2,6 @@
 
 import React, { memo } from "react"
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
 import {
   Select,
   SelectContent,
@@ -14,6 +13,7 @@ import { Clock } from "lucide-react"
 
 interface SettingsProps {
   duration: number
+  recommendedDuration?: number
   onDurationChange: (duration: number) => void
   isRunning: boolean
   className?: string
@@ -21,6 +21,7 @@ interface SettingsProps {
 
 const Settings = memo(function Settings({
   duration,
+  recommendedDuration,
   onDurationChange,
   isRunning,
   className
@@ -43,6 +44,11 @@ const Settings = memo(function Settings({
         <span className="text-sm font-medium text-muted-foreground">
           Duración:
         </span>
+        {recommendedDuration && recommendedDuration !== duration && (
+          <span className="text-xs text-primary ml-1">
+            (Recomendado: {recommendedDuration}s)
+          </span>
+        )}
       </div>
 
       <Select

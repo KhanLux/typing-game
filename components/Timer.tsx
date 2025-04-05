@@ -26,11 +26,17 @@ const Timer = memo(function Timer({
 
   // Reset timer when duration changes
   useEffect(() => {
+    // Reiniciar completamente el temporizador cuando cambia la duración
     setTimeLeft(duration)
     setProgress(100)
     startTimeRef.current = null
     endTimeRef.current = null
-  }, [duration])
+
+    // Si el temporizador está en ejecución, actualizar el tiempo de finalización
+    if (isRunning && startTimeRef.current) {
+      endTimeRef.current = startTimeRef.current + (duration * 1000)
+    }
+  }, [duration, isRunning])
 
   // Handle timer start/stop
   useEffect(() => {

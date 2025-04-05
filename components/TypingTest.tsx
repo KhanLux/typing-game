@@ -1,13 +1,12 @@
 "use client"
 
-import React, { useState, useRef, useCallback, useEffect } from "react"
+import React, { useState, useRef, useCallback, useEffect, useMemo } from "react"
 import { cn } from "@/lib/utils"
 import Timer from "./Timer"
 import TextDisplay from "./TextDisplay"
 import Results from "./Results"
 import Settings from "./Settings"
-import { useWritingTheme } from "./writing-theme-provider"
-import { getTextsByTheme } from "@/lib/themed-typing-texts"
+import { getAllTexts, getTextsByDifficulty } from "@/lib/themed-typing-texts"
 import { useTypingTest } from "@/hooks/use-typing-test"
 
 interface TypingTestProps {
@@ -15,31 +14,53 @@ interface TypingTestProps {
   className?: string
 }
 
-interface PerformancePoint {
-  time: number // seconds elapsed
-  wpm: number
-  accuracy?: number // accuracy at this point in time
-}
-
 const TypingTest = ({ texts, className }: TypingTestProps) => {
-  // Get the current writing theme
-  const { writingTheme } = useWritingTheme()
+  // Función para calcular la duración recomendada basada en la longitud del texto
+  const calculateRecommendedDuration = useCallback((text: string): number => {
+    // Calcular la duración basada en la longitud del texto
+    const textLength = text.length;
+
+    // Asignar directamente a un intervalo basado en la longitud del texto
+    if (textLength < 150) {
+      return 15; // Textos muy cortos
+    } else if (textLength < 300) {
+      return 30; // Textos cortos
+    } else if (textLength < 600) {
+      return 60; // Textos medianos
+    } else {
+      return 120; // Textos largos
+    }
+  }, []);
+
   // State for test configuration
   const [duration, setDuration] = useState(60) // default: 60 seconds
   const containerRef = useRef<HTMLDivElement>(null)
 
-  // Get a random text based on the current writing theme
-  const getRandomText = useCallback(() => {
-    // Get texts filtered by the current theme
-    const themedTexts = getTextsByTheme(writingTheme);
+  // Get a random text from the available texts based on duration
+  const getRandomText = useCallback(async () => {
+    // Determinar la dificultad basada en la duración actual
+    // Esto permite una progresión natural de dificultad
+    let difficulty: 'básico' | 'intermedio' | 'avanzado' = 'intermedio'; // Por defecto
 
-    // If there are no texts for this theme, use the provided texts
-    const textsToUse = themedTexts.length > 0 ? themedTexts : texts;
+    if (duration <= 30) {
+      difficulty = 'básico';
+    } else if (duration <= 60) {
+      difficulty = 'intermedio';
+    } else {
+      difficulty = 'avanzado';
+    }
 
-    // Get a random text from the filtered list
+    // Obtener textos por nivel de dificultad
+    const difficultyTexts = getTextsByDifficulty(difficulty);
+
+    // Si no hay suficientes textos para esta dificultad, usar todos los disponibles
+    const textsToUse = difficultyTexts.length > 0 ? difficultyTexts :
+                       (getAllTexts().length > 0 ? getAllTexts() : texts);
+
+    // Obtener un texto aleatorio
     const randomIndex = Math.floor(Math.random() * textsToUse.length);
     return textsToUse[randomIndex];
-  }, [texts, writingTheme])
+  }, [texts, duration])
 
   // Use the typing test hook
   const {
@@ -59,20 +80,27 @@ const TypingTest = ({ texts, className }: TypingTestProps) => {
     handleKeyDown,
     handleTimerTick,
     handleTimerComplete,
-    handleRestart
+    handleRestart,
+    handleTextChange
   } = useTypingTest({
     texts,
     getRandomText,
     duration
   })
 
-  // Update text when writing theme changes
+  // Inicializar el texto al montar el componente o cuando cambia la duración
   useEffect(() => {
-    // Only update if not currently running a test
+    // Solo actualizar si no hay un test en ejecución
     if (!isRunning && !isFinished) {
-      console.log(`Writing theme changed to: ${writingTheme}, updated text`)
+      // Obtener un nuevo texto aleatorio basado en la duración actual
+      getRandomText().then(newText => {
+        // Actualizar el texto en el hook useTypingTest
+        if (handleTextChange) {
+          handleTextChange(newText);
+        }
+      });
     }
-  }, [writingTheme, isRunning, isFinished])
+  }, [isRunning, isFinished, getRandomText, handleTextChange, duration])
 
   // Focus the container when test starts
   useEffect(() => {
@@ -81,9 +109,19 @@ const TypingTest = ({ texts, className }: TypingTestProps) => {
     }
   }, [isRunning])
 
-  // Handle duration change
+  // Calcular la duración recomendada para el texto actual
+  const recommendedDuration = useMemo(() => {
+    if (!currentText) return 60; // Valor predeterminado si no hay texto
+    return calculateRecommendedDuration(currentText);
+  }, [currentText, calculateRecommendedDuration]);
+
+  // Handle duration change - when user manually changes duration
   const handleDurationChange = useCallback((newDuration: number) => {
-    setDuration(newDuration)
+    // Actualizar la duración
+    setDuration(newDuration);
+
+    // No necesitamos obtener un nuevo texto aquí porque el efecto anterior
+    // se activará cuando cambie la duración y obtendrá un nuevo texto apropiado
   }, [])
 
   return (
@@ -112,6 +150,7 @@ const TypingTest = ({ texts, className }: TypingTestProps) => {
           <div className="mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <Settings
               duration={duration}
+              recommendedDuration={recommendedDuration}
               onDurationChange={handleDurationChange}
               isRunning={isRunning}
             />

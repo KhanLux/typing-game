@@ -124,7 +124,6 @@ const Results = memo(function Results({
     // Calculate final weighted average
     const weightedAvg = totalWeight > 0 ? weightedSum / totalWeight : finalWpm;
 
-    console.log(`Weighted average WPM: ${weightedAvg.toFixed(1)} (total time: ${totalWeight}s)`)
     return weightedAvg;
   }, [performanceData, finalWpm])
 
@@ -159,7 +158,6 @@ const Results = memo(function Results({
     // Un CV de 0.5 o mayor significa baja consistencia (0%)
     const consistencyPercentage = Math.max(0, Math.min(100, 100 - (cv * 200)));
 
-    console.log(`Consistency calculation: Mean WPM: ${mean.toFixed(2)}, StdDev: ${stdDev.toFixed(2)}, CV: ${cv.toFixed(2)}, Consistency: ${Math.round(consistencyPercentage)}%`);
 
     return Math.round(consistencyPercentage);
   }, [performanceData, avgWpm]);
@@ -189,11 +187,6 @@ const Results = memo(function Results({
     return `${minutes}:${seconds.toString().padStart(2, '0')}`
   }
 
-  // Log performance data for debugging
-  console.log('Performance data in Results:', performanceData)
-  console.log('Final WPM:', finalWpm)
-  console.log('Average WPM:', avgWpm)
-  console.log('Max WPM:', maxWpm)
 
   return (
     <div className={cn("w-full max-w-4xl mx-auto p-6 bg-background border border-border", className)}>

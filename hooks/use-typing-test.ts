@@ -9,7 +9,7 @@ interface PerformancePoint {
 
 interface UseTypingTestProps {
   texts: string[];
-  getRandomText: () => string;
+  getRandomText: () => Promise<string> | string;
   duration: number;
 }
 
@@ -58,11 +58,22 @@ export const useTypingTest = ({
     currentText,
   });
 
+  // Función para cambiar el texto actual
+  const handleTextChange = useCallback((newText: string) => {
+    setCurrentText(newText);
+  }, []);
+
   // Inicializar al montar el componente
   useEffect(() => {
     // Solo establecer el texto si no está ya establecido
     if (!currentText) {
-      setCurrentText(getRandomText());
+      // Manejar tanto promesas como strings
+      const textResult = getRandomText();
+      if (textResult instanceof Promise) {
+        textResult.then(text => setCurrentText(text));
+      } else {
+        setCurrentText(textResult);
+      }
     }
 
     // Inicializar otras variables de estado
@@ -94,16 +105,10 @@ export const useTypingTest = ({
 
         // Calcular precisión real basada en el total de errores cometidos
         const accuracyValue = calculateAccuracy(totalErrorsCommitted, errors);
-        
+
         // Solo registrar datos si hay actividad de escritura significativa
         // Esto ayuda a mejorar el cálculo de consistencia
         if (userInput.length > 0) {
-          // Registrar punto de rendimiento cada segundo
-          console.log(
-            `Recording performance data at ${elapsedTime}s: ${currentWpm.toFixed(
-              1
-            )} WPM, Accuracy: ${accuracyValue.toFixed(1)}%, Errors: ${errors}, Total Errors: ${totalErrorsCommitted}`
-          );
 
           setPerformanceData((prev) => {
             // Evitar duplicados en el mismo segundo
@@ -154,12 +159,6 @@ export const useTypingTest = ({
     // Actualizar el estado de precisión con la precisión real
     setAccuracy(accuracyValue);
 
-    // Añadir punto de datos final
-    console.log(
-      `Recording final performance data at ${elapsedTime}s: ${finalWpm} WPM, Accuracy: ${accuracyValue.toFixed(
-        1
-      )}%, Errors: ${errors}, Total Errors: ${totalErrorsCommitted}`
-    );
 
     // Usar un callback para asegurar que tenemos los datos de rendimiento más recientes
     setPerformanceData((prev) => {
@@ -176,7 +175,6 @@ export const useTypingTest = ({
       // Asegurar que los datos están ordenados por tiempo
       updatedData.sort((a, b) => a.time - b.time);
 
-      console.log("Final performance data:", updatedData);
       return updatedData;
     });
 
@@ -211,8 +209,6 @@ export const useTypingTest = ({
     setStartTime(now);
     setIsRunning(true);
 
-    // Añadir punto de datos inicial con 0 WPM y 100% de precisión
-    console.log("Recording initial performance data at 0s: 0 WPM, Accuracy: 100%");
 
     // Crear una serie de puntos de datos iniciales para asegurar un gráfico suave y mejor cálculo de consistencia
     // Al inicio, la precisión es 100% porque aún no se han cometido errores
@@ -223,28 +219,49 @@ export const useTypingTest = ({
     ];
 
     setPerformanceData(initialData);
-    console.log("Initial performance data:", initialData);
   }, []);
 
   // Reiniciar el test con un nuevo texto
   const handleRestart = useCallback(() => {
     // Obtener un nuevo texto aleatorio
-    setCurrentText(getRandomText());
+    const textResult = getRandomText();
+    if (textResult instanceof Promise) {
+      textResult.then(text => {
+        setCurrentText(text);
 
-    // Resetear todas las demás variables de estado
-    setUserInput("");
-    setCurrentPosition(0);
-    setIsRunning(false);
-    setIsFinished(false);
-    setStartTime(null);
-    setElapsedTime(0);
-    setWpm(0);
-    setAccuracy(100);
-    setErrors(0);
-    setTotalErrorsCommitted(0);
-    setPerformanceData([]);
-    setErrorIndices([]);
-    setErrorTimestamps([]);
+        // Resetear todas las demás variables de estado
+        setUserInput("");
+        setCurrentPosition(0);
+        setIsRunning(false);
+        setIsFinished(false);
+        setStartTime(null);
+        setElapsedTime(0);
+        setWpm(0);
+        setAccuracy(100);
+        setErrors(0);
+        setTotalErrorsCommitted(0);
+        setPerformanceData([]);
+        setErrorIndices([]);
+        setErrorTimestamps([]);
+      });
+    } else {
+      setCurrentText(textResult);
+
+      // Resetear todas las demás variables de estado
+      setUserInput("");
+      setCurrentPosition(0);
+      setIsRunning(false);
+      setIsFinished(false);
+      setStartTime(null);
+      setElapsedTime(0);
+      setWpm(0);
+      setAccuracy(100);
+      setErrors(0);
+      setTotalErrorsCommitted(0);
+      setPerformanceData([]);
+      setErrorIndices([]);
+      setErrorTimestamps([]);
+    }
   }, [getRandomText]);
 
   // Configurar detección de escritura
@@ -341,14 +358,6 @@ export const useTypingTest = ({
         setErrors(currentErrors);
         setAccuracy(accuracyValue);
 
-        // Log para depuración
-        console.log(
-          `After backspace - Accuracy: ${accuracyValue.toFixed(
-            1
-          )}%, Errors: ${currentErrors}, Total Errors: ${totalErrorsCommitted}, Chars: ${
-            newUserInput.length
-          }`
-        );
 
         return;
       }
@@ -395,14 +404,6 @@ export const useTypingTest = ({
         setErrors(currentErrors);
         setAccuracy(accuracyValue);
 
-        // Log para depuración
-        console.log(
-          `Current accuracy: ${accuracyValue.toFixed(
-            1
-          )}%, Errors: ${currentErrors}, Total Errors: ${totalErrorsCommitted}, Chars: ${
-            newUserInput.length
-          }`
-        );
 
         // Verificar si el texto está completado
         if (currentPosition + 1 >= currentText.length) {
@@ -416,12 +417,6 @@ export const useTypingTest = ({
           // Actualizar el estado de precisión con la precisión real
           setAccuracy(finalAccuracyValue);
 
-          // Añadir punto de datos final
-          console.log(
-            `Recording final performance data at ${elapsedTime}s: ${finalWpm} WPM, Accuracy: ${finalAccuracyValue.toFixed(
-              1
-            )}%, Errors: ${currentErrors}, Total Errors: ${totalErrorsCommitted}`
-          );
 
           // Usar un callback para asegurar que tenemos los datos de rendimiento más recientes
           setPerformanceData((prev) => {
@@ -438,7 +433,6 @@ export const useTypingTest = ({
             // Asegurar que los datos están ordenados por tiempo
             updatedData.sort((a, b) => a.time - b.time);
 
-            console.log("Final performance data on text completion:", updatedData);
             return updatedData;
           });
 
@@ -478,12 +472,13 @@ export const useTypingTest = ({
     performanceData,
     errorIndices,
     errorTimestamps,
-    
+
     // Manejadores
     handleKeyDown,
     handleTimerTick,
     handleTimerComplete,
     handleStart,
     handleRestart,
+    handleTextChange,
   };
 };

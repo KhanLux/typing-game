@@ -8,8 +8,7 @@ import { cn } from "@/lib/utils"
 import { useTheme } from "next-themes"
 import { motion, AnimatePresence } from "framer-motion"
 import ThemeSelector from "@/components/theme-selector"
-import WritingThemeSelector from "@/components/writing-theme-selector"
-import { useWritingTheme } from "@/components/writing-theme-provider"
+// Removed writing theme related imports
 
 interface TypingTestProps {
   quotes: string[]
@@ -31,7 +30,7 @@ export default function TypingTest({ quotes }: TypingTestProps) {
   const textContainerRef = useRef<HTMLDivElement>(null)
   const wpmIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const { theme, setTheme } = useTheme()
-  const { writingTheme } = useWritingTheme()
+  // Removed writing theme related code
   const [cursorStyle, setCursorStyle] = useState({
     left: 0,
     top: 0,
@@ -109,12 +108,12 @@ export default function TypingTest({ quotes }: TypingTestProps) {
     }
   }, [isFinished])
 
-  // Reset game when writing theme changes
+  // Reset game when mounted
   useEffect(() => {
     if (mounted) {
       initGame()
     }
-  }, [writingTheme, mounted])
+  }, [mounted])
 
   // Calculate WPM
   const calculateWPM = () => {
@@ -365,8 +364,7 @@ export default function TypingTest({ quotes }: TypingTestProps) {
             setTheme={setTheme}
           />
 
-          {/* Writing Theme Selector */}
-          <WritingThemeSelector />
+          {/* Writing Theme Selector removed */}
         </div>
       </div>
     )
@@ -447,10 +445,7 @@ export default function TypingTest({ quotes }: TypingTestProps) {
           )}
         </div>
 
-        {/* Current writing theme indicator */}
-        <div className="text-xs text-muted-foreground">
-          Writing Theme: <span className="font-medium capitalize">{writingTheme}</span>
-        </div>
+        {/* Writing theme indicator removed */}
       </div>
 
       {/* Reset button - minimal style */}
