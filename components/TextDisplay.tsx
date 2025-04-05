@@ -41,13 +41,17 @@ const TextDisplay = memo(function TextDisplay({ text, userInput, currentPosition
     >
       {text.split("").map((char, index) => {
         let charClass = "opacity-40" // Default untyped style
+        let isCorrect = false
+        let isError = false
 
         if (index < userInput.length) {
           // Typed characters
           if (userInput[index] === char) {
             charClass = "opacity-100" // Correct
+            isCorrect = true
           } else {
             charClass = "text-red-500 dark:text-red-400 opacity-100" // Incorrect
+            isError = true
           }
         }
 
@@ -59,12 +63,20 @@ const TextDisplay = memo(function TextDisplay({ text, userInput, currentPosition
             key={index}
             className={cn(
               charClass,
-              "transition-colors duration-100",
+              "transition-all duration-150",
               // Mejorar legibilidad en dispositivos móviles
               "text-base sm:text-lg md:text-xl",
               // Mejorar espaciado para facilitar la lectura
-              "tracking-normal sm:tracking-wide"
+              "tracking-normal sm:tracking-wide",
+              // Animaciones para caracteres
+              isCurrent && "animate-pulse-subtle scale-110",
+              isCorrect && "animate-correct",
+              isError && "animate-error"
             )}
+            style={{
+              transform: isCurrent ? 'scale(1.1)' : 'scale(1)',
+              transition: 'transform 0.15s ease-in-out'
+            }}
             aria-current={isCurrent ? "true" : "false"}
             ref={isCurrent ? cursorRef : undefined}
           >

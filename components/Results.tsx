@@ -185,11 +185,15 @@ const Results = memo(function Results({
 
   return (
     <div
-      className={cn("w-full max-w-4xl mx-auto p-4 sm:p-6 bg-background border border-border rounded-lg", className)}
+      className={cn(
+        "w-full max-w-4xl mx-auto p-4 sm:p-6 bg-background border border-border rounded-lg",
+        "animate-scale-in",
+        className
+      )}
       role="region"
       aria-label="Resultados de la prueba de mecanografía"
     >
-      <div className="flex flex-col md:flex-row gap-4 sm:gap-6 mb-6 sm:mb-8">
+      <div className="flex flex-col md:flex-row gap-4 sm:gap-6 mb-6 sm:mb-8 animate-fade-in" style={{ animationDelay: '0.1s' }}>
         {/* Main stats */}
         <div className="flex-1">
           <div className="flex flex-col">
@@ -254,8 +258,9 @@ const Results = memo(function Results({
 
       {/* Performance chart */}
       <div
-        className="h-64 sm:h-80 mb-6 sm:mb-8 bg-background/50 border border-border/50 p-3 sm:p-4 rounded-md"
+        className="h-64 sm:h-80 mb-6 sm:mb-8 bg-background/50 border border-border/50 p-3 sm:p-4 rounded-md animate-fade-in"
         aria-label="Gráfico de rendimiento"
+        style={{ animationDelay: '0.3s' }}
       >
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 gap-2">
           <div className="text-xs text-muted-foreground">palabras por minuto</div>
@@ -406,7 +411,7 @@ const Results = memo(function Results({
       )}
 
       {/* Action buttons */}
-      <div className="flex justify-center mt-8 sm:mt-10 mb-4 sm:mb-6">
+      <div className="flex justify-center mt-8 sm:mt-10 mb-4 sm:mb-6 animate-slide-up" style={{ animationDelay: '0.5s' }}>
         <Button
           onClick={onRestart}
           variant="default"

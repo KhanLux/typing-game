@@ -12,9 +12,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { ChevronDown, Palette, Keyboard, BarChart2 } from "lucide-react"
+import { ChevronDown, Palette, Keyboard, BarChart2, HelpCircle, Volume2, VolumeX } from "lucide-react"
 import { useIsMobile } from "@/components/ui/use-mobile"
 import { HistoryView } from "@/components/HistoryView"
+import { Tutorial } from "@/components/Tutorial"
+import { isSoundEnabled, setSoundEnabled } from "@/lib/sound-service"
 import { getUserPreferences, saveUserPreferences } from "@/lib/storage-service"
 
 // App themes configuration
@@ -33,6 +35,8 @@ const appThemes = [
 export const Header = () => {
   const [mounted, setMounted] = React.useState(false)
   const [historyOpen, setHistoryOpen] = useState(false)
+  const [tutorialOpen, setTutorialOpen] = useState(false)
+  const [soundOn, setSoundOn] = useState(true)
   const { theme, setTheme } = useTheme()
   const isMobile = useIsMobile()
 
@@ -45,6 +49,17 @@ export const Header = () => {
       const preferences = getUserPreferences();
       if (preferences.theme) {
         handleThemeChange(preferences.theme);
+      }
+
+      // Cargar estado del sonido
+      setSoundOn(isSoundEnabled());
+
+      // Mostrar tutorial automáticamente para nuevos usuarios
+      const hasSeenTutorial = localStorage.getItem('tutorial_seen') === 'true';
+      if (!hasSeenTutorial) {
+        // Pequeño retraso para asegurar que la interfaz esté cargada
+        const timer = setTimeout(() => setTutorialOpen(true), 1000);
+        return () => clearTimeout(timer);
       }
     }
   }, [])
@@ -84,6 +99,20 @@ export const Header = () => {
         <div className="flex items-center gap-2">
           {renderThemeSelectors ? (
             <>
+              {/* Tutorial Button */}
+              <Button
+                variant="ghost"
+                size={isMobile ? "icon" : "default"}
+                className="gap-2 h-9 px-2 sm:h-10 sm:px-4"
+                onClick={() => setTutorialOpen(true)}
+                aria-label="Ver tutorial"
+              >
+                {!isMobile && (
+                  <span className="text-sm sm:text-base">Tutorial</span>
+                )}
+                <HelpCircle className="h-4 w-4" aria-hidden="true" />
+              </Button>
+
               {/* Historial Button */}
               <Button
                 variant="ghost"
@@ -136,8 +165,9 @@ export const Header = () => {
           ) : null}
         </div>
 
-        {/* Componente de historial */}
+        {/* Componentes modales */}
         <HistoryView open={historyOpen} onOpenChange={setHistoryOpen} />
+        <Tutorial open={tutorialOpen} onOpenChange={setTutorialOpen} />
       </div>
     </header>
   )

@@ -174,7 +174,7 @@ const TypingTest = ({ texts, className }: TypingTestProps) => {
           aria-label="Área de mecanografía"
           aria-describedby="typing-instructions"
         >
-          <div className="mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="mb-6 flex flex-col md:flex-row items-center justify-between gap-4 animate-fade-in">
             <Settings
               duration={duration}
               recommendedDuration={recommendedDuration}
@@ -196,14 +196,15 @@ const TypingTest = ({ texts, className }: TypingTestProps) => {
             text={currentText}
             userInput={userInput}
             currentPosition={currentPosition}
-            className="mb-6"
+            className="mb-6 animate-fade-in"
+            style={{ animationDelay: '0.1s' }}
           />
 
           {/* Instrucciones para el usuario */}
           {!isRunning && !isFinished && (
             <div
               id="typing-instructions"
-              className="text-center mt-6 text-sm sm:text-base text-muted-foreground"
+              className="text-center mt-6 text-sm sm:text-base text-muted-foreground animate-pulse-subtle"
               aria-live="polite"
             >
               Comienza a escribir para iniciar la prueba.
