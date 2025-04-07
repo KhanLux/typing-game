@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, memo } from "react"
 import { cn } from "@/lib/utils"
+import CircularTimer from "./CircularTimer"
 
 interface TimerProps {
   duration?: number // in seconds, optional with default
@@ -95,37 +96,23 @@ const Timer = memo(function Timer({
     }
   }, [isRunning, duration, onComplete, onTick])
 
-  // Determine color based on remaining time
-  const getTimerColor = () => {
-    if (progress > 60) return "text-foreground"
-    if (progress > 30) return "text-yellow-500"
-    return "text-red-500"
-  }
-
   // Format time for screen readers (more descriptive)
   const formattedTimeForScreenReader = `${timeLeft} segundos restantes`;
 
   return (
     <div
-      className={cn("flex items-center gap-2", className)}
+      className={cn("flex items-center justify-center", className)}
       role="timer"
       aria-live="polite"
       aria-atomic="true"
     >
-      {/* Minimalist timer display */}
-      <div className="font-mono text-xl sm:text-2xl font-medium tracking-tight">
-        <span
-          className={getTimerColor()}
-          aria-hidden="true" // Hide from screen readers as we provide a more descriptive version
-        >
-          {timeLeft}
-        </span>
-        <span className="sr-only">{formattedTimeForScreenReader}</span>
-      </div>
-
-      <div className="text-xs sm:text-sm text-muted-foreground">
-        seg
-      </div>
+      {/* Circular timer display */}
+      <CircularTimer
+        progress={progress}
+        timeLeft={timeLeft}
+        className="animate-fade-in"
+      />
+      <span className="sr-only">{formattedTimeForScreenReader}</span>
     </div>
   )
 })
